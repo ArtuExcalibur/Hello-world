@@ -1,0 +1,1503 @@
+program ucer;
+uses crt,sysutils;
+
+const
+        year    = 2017;
+        reg1    = 30000;
+	reg2    = 58000;
+	reg3	= 87000;
+	reg4	= 116000;
+	vip1	= 57000;
+	vip2	= 114000;
+	vip3	= 171000;
+	vip4	= 228000;
+
+	disc1	= 5;
+	disc2	= 10;
+	disc3	= 15;
+        filename = 'member.dat';
+
+type
+        udata = record
+                username        : string;
+                fullname        : string;
+                password        : string;
+                mobilephone     : real;
+                birthdayDD      : integer;
+                birthdayMM      : integer;
+                birthdayYYYY    : integer;
+                age             : integer;
+                gender          : char;
+end;
+
+        booking = record
+		place           : integer;
+		aroom	        : boolean;
+		room	        : string;
+		time	        : integer;
+		bookclass       : string;
+end;
+        arr_data = array of udata;
+
+
+
+var
+        user    : udata;
+        book    : booking;
+        ar_data : arr_data;
+        member  : file of udata;
+        choice  : char;
+        i,indonesia     : integer;
+        membership      : boolean;
+
+        procedure save_dat(var ar_data : arr_data);
+        var
+                x : integer;
+        begin
+                assign(member,filename);
+                rewrite(member);
+                for x:=0 to length(ar_data)-1 do
+                begin
+                        write(member,ar_data[x]);
+                end;
+                close(member);
+        end;
+
+        procedure check_dat(var ar_data: arr_data);
+        var
+                temp : udata;
+        begin
+                assign(member,filename);
+                if fileexists(filename) then
+                begin
+                        reset(member);
+                        while not eof(member) do
+                        begin
+                                read(member,temp);
+                                setlength(ar_data, length(ar_data)+1);
+                                ar_data[length(ar_data)-1] := temp;
+                        end;
+                end
+
+                else
+                        rewrite(member);
+                close(member);
+
+        end;
+
+        procedure regist(var ar_data : arr_data);
+        var
+                x : integer;
+        begin
+        clrscr;
+                indonesia := 62;
+                x := length(ar_data);
+                setlength(ar_data,length(ar_data)+1);
+                writeln('_________________________________');
+                writeln;
+                writeln('     | CREATE NEW MEMBER |       ');
+                writeln('_________________________________');
+                writeln;
+
+                writeln('Username              :');
+                writeln;
+                writeln('Password              :');
+                writeln;
+                writeln('Full Name             :');
+                writeln;
+                writeln('Birthday (DD/MM/YYYY) :');
+                gotoxy(29,12);
+                writeln('/');
+                gotoxy(34,12);
+                writeln('/');
+                writeln;
+                writeln('Gender (M/F)          :');
+                writeln;
+                writeln('Mobile Phone          : +',indonesia);
+                // readln
+                gotoxy(26,6);
+	      	readln(ar_data[x].username);
+                gotoxy(26,8);
+                readln(ar_data[x].password);
+                gotoxy(26,10);
+                readln(ar_data[x].fullname);
+                gotoxy(26,12);
+                readln(ar_data[x].birthdayDD);
+		gotoxy(31,12);
+                readln(ar_data[x].birthdayMM);
+		gotoxy(36,12);
+                readln(ar_data[x].birthdayYYYY);
+                gotoxy(26,14);
+                readln(ar_data[x].gender);
+                gotoxy(29,16);
+                readln(ar_data[x].mobilephone);
+
+                save_dat(ar_data);
+
+                clrscr;
+                        writeln;
+                        writeln('Congratulations, ',ar_data[x].fullname,' you are now a member of Code Emerlad''s karaoke!');
+                        writeln;
+                        writeln('Press <ENTER> to Menu');
+                        readln;
+
+        end;
+
+        procedure view_Member(ar_data:arr_data);
+        var
+                x,y : integer;
+                m_age, pos : integer;
+        begin
+        clrscr;
+
+                writeln('_______________________________________________________________________________________________________');
+                writeln;
+                writeln('                             | MEMBER OF Code Emerlad Karaoke |                        ');
+                writeln('_______________________________________________________________________________________________________');
+                writeln;
+                writeln;
+                writeln('ID   USERNAME           FULLNAME                 BIRTHDAY         AGE   GENDER  PHONE');
+                writeln('=======================================================================================================');
+                                      {
+                gotoxy(95,7);
+                writeln('Sort by');
+                gotoxy(95,10);
+                writeln('1. Username.');
+                gotoxy(95,11);
+                writeln('2. Year.');
+                gotoxy(95,12);
+                writeln('3. Age.');
+                                     }
+                pos := 10;
+
+                for x:=0 to length(ar_data)-1 do
+                        begin
+                             //   read(member,ar_data[x]);
+                                gotoxy(1,pos);
+                                write(x);
+                                gotoxy(6,pos);
+                                write(ar_data[x].username);
+                                gotoxy(25,pos);
+                                write(ar_data[x].fullname);
+                                gotoxy(49,pos);
+                                write('|');
+                                gotoxy(64,pos);
+                                write('|');
+
+                                // pusing
+                                gotoxy(50,pos);
+                                write(ar_data[x].birthdayDD);
+                                gotoxy(53,pos);
+                                write('/');
+                                gotoxy(55,pos);
+                                write(ar_data[x].birthdayMM);
+                                gotoxy(58,pos);
+                                write('/');
+                                gotoxy(60,pos);
+                                write(ar_data[x].birthdayYYYY);
+                                // pusing
+
+                               // PROCEDURE UMUR
+                                gotoxy(66,pos);
+                                write('|');
+                                gotoxy(71,pos);
+                                write('|');
+                               // for y:=0 to length(ar_data)-1 do
+                                ar_data[x].age := ((year) - (ar_data[x].birthdayYYYY));
+                                gotoxy(68,pos);
+                                write(ar_data[x].age);
+                               // write(member_age(ar_data));
+                               // PROCEDURE UMUR
+
+                                gotoxy(73,pos);
+                                write('|');
+                                gotoxy(77,pos);
+                                write('|');
+                                gotoxy(75,pos);
+                                write(ar_data[x].gender);
+                                gotoxy(80,pos);
+                                write('|');
+                                gotoxy(93,pos);
+                                write('|');
+                                gotoxy(81,pos);
+                                write(indonesia,ar_data[x].mobilephone:0:0);
+                               // x:=x+1;
+                                pos := pos + 1;
+                        end;
+                        readln;
+                //close(member);
+        end;
+
+        procedure insert_sort(var ar_data : arr_data);
+        var
+                x,y,z : integer;
+                temp : string;
+
+        begin
+                x := length(ar_data);
+                for z := 1 to x-1 do
+                        for y := x downto z do
+                                if (ar_data[y].username[1] > ar_data[y+1].username[1]) then
+                                begin
+                                clrscr;
+                                        temp := ar_data[y].username;
+                                        ar_data[y+1].username := temp;
+                                        ar_data[y].username := ar_data[y+1].username;
+                                        writeln(ar_data[y].username);
+                                        readln;
+                                end;
+        end;
+
+        procedure insertion_sort(ar_data : arr_data);
+        var
+                x, i, j, temp : integer;
+        begin
+                x := length(ar_data);
+                for i := 2 to x do
+                begin
+                        temp := ar_data[i].age;
+                        j := i;
+                        while ((j>1) and ( temp < ar_data[j-1].age)) do
+                        begin
+                                ar_data[j].age := ar_data[j-1].age;
+                                j := j-1;
+                        end;
+                        ar_data[j].age := temp;
+                end;
+
+        end;
+
+        function search_username(ar_data: arr_data; search: string): integer;
+        var
+                x,y : integer;
+        begin
+                x := 0;
+                y := length(ar_data)-1;
+                while (x < y) and (ar_data[x].username<>search) do
+                        x := x + 1;
+
+                if ar_data[x].username = search then
+                        search_username := x
+                else
+                begin
+                        writeln;
+                        writeln('Username not found');
+                        search_username := -1;
+                        readln;
+                end;
+        end;
+
+        function search_hp(ar_data : arr_data; searchm : real) : integer;
+        var
+                x,  y  : integer;
+        begin
+                x := 0;
+                y := length(ar_data)-1;
+                while (x < y) and (ar_data[x].mobilephone<>searchm) do
+                        x := x + 1;
+                if ar_data[x].mobilephone = searchm then
+                        search_hp := x
+                else
+                begin
+                        writeln;
+                        writeln('Mobile Phone not found!');
+                        search_hp := -1;
+                        readln;
+
+                end;
+
+        end;
+
+        procedure update_dat_username(var ar_data: arr_data);
+        var
+                namelog, new_namelog : string;
+                y  : char;
+                x, z    : integer;
+        begin
+        clrscr;
+                assign(member,filename);
+                reset(member);
+               // setlength(ar_data,length(ar_data)+1);
+                writeln(' Edit CE Membership');
+                writeln;
+                write('Old Username       : ');
+                readln(namelog);
+
+                x := search_username(ar_data,namelog);
+
+                if (x <> -1) and (ar_data[x].username = namelog) then
+                begin
+
+                        writeln;
+                        write('New Username       : ');
+                        readln(new_namelog);
+                        writeln;
+                        writeln('You are about to change ',namelog,'!');
+                        write('Your Choice (Y/N) : ');
+                        readln(y);
+                        if ( y = 'y' ) or ( y = 'Y' ) then
+                        begin
+                                begin
+                                clrscr;
+                                write(member,ar_data[x]);
+                                writeln('Old Username : ',namelog);
+                                writeln;
+                                writeln('New Username : ',new_namelog);
+                                writeln;
+
+                                writeln(namelog,' has been changed to ',new_namelog);
+                                ar_data[x].username := new_namelog;
+                                readln;
+                                end;
+                        end
+                        else
+                                exit;
+
+               end;
+              // save_dat(ar_data);
+              close(member);
+        end;
+
+        procedure delete_member(var ar_data: arr_data; search : string);
+        var
+                x,y     : integer;
+                choice : char;
+        begin
+        clrscr;
+                writeln('Delete CE Membership');
+                writeln;
+                write('Username       : ');
+                readln(search);
+                x := search_username(ar_data,search);
+                if x <> -1 then
+                begin
+                clrscr;
+                        writeln;
+                        writeln('Are you sure to delete ',search,'''s Membership ? ');
+                        writeln;
+                        writeln('       1. Delete.');
+                        writeln('       2. Cancel.');
+                        choice := readkey;
+                        case choice of
+                                #49 :   begin
+
+                                                for y := x +1 to length(ar_data)-1 do
+                                                begin
+                                                clrscr;
+                                                        writeln;
+                                                        writeln(search,'''s Membership is deleted');
+                                                        ar_data[y-1] := ar_data[y];
+                                                        setlength(ar_data,length(ar_data)-1);
+                                                        readln;
+                                                        exit;
+                                                end;
+                                        end;
+                                #50 :   begin
+                                        exit;
+                                        end;
+
+                        end;
+
+                end
+
+                else
+                       // writeln('Username not found');
+                        readln;
+
+                save_dat(ar_data);
+        end;
+
+        procedure login_Member(var ar_data : arr_data; var membership : boolean);
+        var
+	        x,y,z : integer;
+	        namelog, passlog : string;
+
+        begin
+        clrscr;
+
+                writeln('________________________________');
+                writeln;
+                writeln(' | Code Emerlad member LOGIN |');
+                writeln('________________________________');
+                writeln;
+
+	        writeln;
+	        writeln('         Username : ');
+	        writeln;
+	        writeln('         Password : ');
+                gotoxy(21,7);
+                readln(namelog);
+                gotoxy(21,9);
+                readln(passlog);
+
+	        x := 0;
+                y := length(ar_data)-1;
+                while (x < y) do
+                x := x +1;
+
+	        if (namelog = ar_data[x].username) and (passlog = ar_data[x].password) then
+		        begin
+		        clrscr;
+                                writeln('___________________________________');
+                                writeln;
+			        writeln('       Welcome , ',ar_data[x].fullname,' !');
+                                writeln('___________________________________');
+                                membership := true;
+                                readln;
+		        end
+
+		        else // if passlog <> ar_data[x].password then
+                        begin
+                        clrscr;
+                                writeln('___________________________');
+                                writeln;
+                                writeln(' Code Emerlad member LOGIN');
+                                writeln('___________________________');
+                                writeln;
+                                writeln;
+			        writeln('User or password doesnt match');
+                                writeln;
+                                readln;
+                                exit;
+                                end;
+        end;
+
+        procedure Fclass_reg;
+        var
+                cs, css, csss : char;
+                money, price : real;
+        begin
+        clrscr;
+                price := 0;
+					        writeln('________________________');
+					        writeln;
+					        writeln('       REGULAR Class');
+					        writeln('________________________');
+					        writeln;
+                                                writeln('1. 30 Minute   : 30.000');
+					        writeln('2. 60 minute   : 58.000');
+					        writeln('3. 90 minute   : 87.000');
+					        writeln('4. 120 minute  : 116.000');
+					        writeln('5. Back.');
+                                                writeln;
+					        writeln('Press the button of your choice');
+                                                css   := readkey;
+                                                case css of
+                                                        #49 :   begin
+                                                                clrscr;
+                                                                        if membership = true and book.aroom = true then
+                                                                        begin
+                                                                                price := reg1-((reg1 * disc1)/100);
+                                                                                writeln('You choosed REGULAR Class for 30 minutes');
+                                                                                writeln('Membership grant you 5% discount~');
+                                                                                writeln;
+                                                                                writeln('The Amount you have to pay : Rp. ',price:0:0);
+                                                                                writeln;
+                                                                                write('User''s money            : Rp. ');
+                                                                                readln(money);
+                                                                                writeln;
+                                                                                writeln('Press <ENTER> to pay');
+                                                                                csss  := readkey;
+                                                                                if csss = #13 then
+                                                                                                begin
+
+                                                                                                        if money > price then
+                                                                                                        begin
+                                                                                                                Price := money - price;
+                                                                                                                writeln;
+                                                                                                                writeln('Your Exchange is : Rp. ',price:0:0);
+                                                                                                                writeln;
+                                                                                                                writeln('Thank you :)');
+                                                                                                                readln;
+                                                                                                                halt;
+                                                                                                        end
+                                                                                                        else
+                                                                                                        begin
+                                                                                                                writeln('Thank you :)');
+                                                                                                                exit;
+                                                                                                        end;
+                                                                                                end
+                                                                                else
+                                                                                        begin
+                                                                                        exit;
+                                                                                        end;
+                                                                        end
+                                                                        else if book.aroom = true then
+                                                                        begin
+                                                                        clrscr;
+                                                                                price := reg1;
+                                                                                writeln('You choose REGULAR Class for 30 Minutes');
+                                                                                writeln('If you have membership, you could get 5% Discount~');
+                                                                                writeln;
+                                                                                writeln('The Amount you have to pay : Rp. ',price:0:0);
+                                                                                writeln;
+                                                                                write('User''s money            : Rp. ');
+                                                                                readln(money);
+                                                                                writeln;
+                                                                                writeln('Press <ENTER> to pay');
+                                                                                csss := readkey;
+                                                                                if csss = #13 then
+                                                                                                begin
+                                                                                                         if money > price then
+                                                                                                        begin
+                                                                                                                Price := money - price;
+                                                                                                                writeln;
+                                                                                                                writeln('Your Exchange is : Rp. ',price:0:0);
+                                                                                                                writeln;
+                                                                                                                writeln('Thank you :)');
+                                                                                                                readln;
+                                                                                                                halt;
+                                                                                                        end
+                                                                                                        else
+                                                                                                        begin
+                                                                                                                writeln('Thank you :)');
+                                                                                                                exit;
+                                                                                                        end;
+                                                                                                end
+                                                                                else
+                                                                                        begin
+                                                                                        exit;
+                                                                                        end;
+                                                                        end;
+                                                                end;
+                                                        #50 :   begin
+                                                                clrscr;
+                                                                        if membership = true and book.aroom = true then
+                                                                        begin
+                                                                                price := reg2-((reg2 * disc2)/100);
+                                                                                writeln('You choosed REGULAR Class for 60 minutes');
+                                                                                writeln('Membership grant you 10% discount~');
+                                                                                writeln;
+                                                                                writeln('The Amount you have to pay : Rp. ',price:0:0);
+                                                                                writeln;
+                                                                                write('User''s money            : Rp. ');
+                                                                                readln(money);
+                                                                                writeln;
+                                                                                writeln('Press <ENTER> to pay');
+                                                                                csss  := readkey;
+                                                                                if csss = #13 then
+                                                                                                begin
+                                                                                                        if money > price then
+                                                                                                        begin
+                                                                                                                Price := money - price;
+                                                                                                                writeln;
+                                                                                                                writeln(' Your Exchange is : Rp. ',price:0:0);
+                                                                                                                writeln;
+                                                                                                                writeln('Thank you');
+                                                                                                                readln;
+                                                                                                                halt;
+                                                                                                        end
+                                                                                                        else
+                                                                                                        begin
+                                                                                                                writeln('Thank you :)');
+                                                                                                                exit;
+                                                                                                        end;
+                                                                                                end
+                                                                                else
+                                                                                        begin
+                                                                                        exit;
+                                                                                        end;
+                                                                        end
+                                                                        else if book.aroom = true then
+                                                                        begin
+                                                                        clrscr;
+                                                                                price := reg2;
+                                                                                writeln('You choose REGULAR Class for 60 Minutes');
+                                                                                writeln('If you have membership, you could get 10% Discount~');
+                                                                                writeln;
+                                                                                writeln('The Amount you have to pay : Rp. ',price:0:0);
+                                                                                writeln;
+                                                                                write('User''s money            : Rp. ');
+                                                                                readln(money);
+                                                                                writeln;
+                                                                                writeln('Press <ENTER> to pay');
+                                                                                csss := readkey;
+                                                                                if csss = #13 then
+                                                                                                begin
+                                                                                                         if money > price then
+                                                                                                        begin
+                                                                                                                Price := money - price;
+                                                                                                                writeln;
+                                                                                                                writeln(' Your Exchange is : Rp. ',price:0:0);
+                                                                                                                writeln;
+                                                                                                                writeln('Thank you');
+                                                                                                                readln;
+                                                                                                                halt;
+                                                                                                        end
+                                                                                                        else
+                                                                                                        begin
+                                                                                                                writeln('Thank you :)');
+                                                                                                                exit;
+                                                                                                        end;
+                                                                                                end
+                                                                                else
+                                                                                        begin
+                                                                                        exit;
+                                                                                        end;
+                                                                        end;
+                                                                end;
+                                                        #51 :   begin
+                                                                clrscr;
+                                                                        if membership = true and book.aroom = true then
+                                                                        begin
+                                                                                price := reg3-((reg3*disc2)/100);
+                                                                                writeln('You choose REGULAR class for 90 minutes');
+                                                                                writeln('Membership grant you 10% discount~');
+                                                                                writeln;
+                                                                                writeln('The amount you have to pay : Rp. ',price:0:0);
+                                                                                writeln;
+                                                                                write('User''s money            : Rp. ');
+                                                                                readln(money);
+                                                                                writeln;
+                                                                                writeln('Press <ENTER> to pay');
+                                                                                readkey;
+                                                                                csss := #13;
+                                                                                if csss = #13 then
+                                                                                        begin
+                                                                                                 if money > price then
+                                                                                                        begin
+                                                                                                                Price := money - price;
+                                                                                                                writeln;
+                                                                                                                writeln(' Your Exchange is : Rp. ',price:0:0);
+                                                                                                                writeln;
+                                                                                                                writeln('Thank you');
+                                                                                                                readln;
+                                                                                                                halt;
+                                                                                                        end
+                                                                                                        else
+                                                                                                        begin
+                                                                                                                writeln('Thank you :)');
+                                                                                                                exit;
+                                                                                                        end;
+                                                                                        end;
+                                                                        end
+
+                                                                        else if book.aroom = true then
+                                                                        begin
+                                                                                price := reg3;
+                                                                                writeln('you choose REGULAR Class for 90 minutes');
+                                                                                writeln('If you have membership, you could get 10% discount~');
+                                                                                writeln;
+                                                                                writeln('The amount you have to pay : Rp. ',price:0:0);
+                                                                                writeln;
+                                                                                write('User''s money            : Rp. ');
+                                                                                readln(money);
+                                                                                writeln;
+                                                                                writeln('Press <ENTER> to pay');
+                                                                                readkey;
+                                                                                csss := #13;
+                                                                                if csss = #13 then
+                                                                                        begin
+                                                                                                 if money > price then
+                                                                                                        begin
+                                                                                                                Price := money - price;
+                                                                                                                writeln;
+                                                                                                                writeln(' Your Exchange is : Rp. ',price:0:0);
+                                                                                                                writeln;
+                                                                                                                writeln('Thank you');
+                                                                                                                readln;
+                                                                                                                halt;
+                                                                                                        end
+                                                                                                        else
+                                                                                                        begin
+                                                                                                                writeln('Thank you :)');
+                                                                                                                exit;
+                                                                                                        end;
+                                                                                        end;
+                                                                        end;
+                                                                end;
+                                                        #52 :   begin
+                                                                clrscr;
+                                                                        if membership = true and book.aroom = true then
+                                                                        begin
+                                                                                price := reg4-((reg4*disc3)/100);
+                                                                                writeln('You choose REGULAR Class for 120 minutes');
+                                                                                writeln('Membership grant you 15% Discount~');
+                                                                                writeln;
+                                                                                writeln('The Amount you have to pay : Rp. ',price:0:0);
+                                                                                writeln;
+                                                                                write('User''s money            : Rp. ');
+                                                                                readln(money);
+                                                                                writeln;
+                                                                                writeln('Press <ENTER> to pay');
+                                                                                readkey;
+                                                                                csss := #13;
+                                                                                if csss = #13 then
+                                                                                begin
+                                                                                         if money > price then
+                                                                                                        begin
+                                                                                                                Price := money - price;
+                                                                                                                writeln;
+                                                                                                                writeln(' Your Exchange is : Rp. ',price:0:0);
+                                                                                                                writeln;
+                                                                                                                writeln('Thank you');
+                                                                                                                readln;
+                                                                                                                halt;
+                                                                                                        end
+                                                                                                        else
+                                                                                                        begin
+                                                                                                                writeln('Thank you :)');
+                                                                                                                exit;
+                                                                                                        end;
+                                                                                end;
+                                                                         end
+
+                                                                         else if book.aroom = true then
+                                                                         begin
+                                                                                price := reg4;
+                                                                                writeln('You choose REGULAR Class for 120 minutes');
+                                                                                writeln('If you have membership, you could get 15% Discount~');
+                                                                                writeln;
+                                                                                writeln('The amount you have to pay : Rp. ',price:0:0);
+                                                                                writeln;
+                                                                                write('User''s money            : Rp. ');
+                                                                                readln(money);
+                                                                                writeln;
+                                                                                writeln('Press <ENTER> to pay');
+                                                                                readkey;
+                                                                                css := #13;
+                                                                                if css = #13 then
+                                                                                begin
+                                                                                         if money > price then
+                                                                                                        begin
+                                                                                                                Price := money - price;
+                                                                                                                writeln;
+                                                                                                                writeln(' Your Exchange is : Rp. ',price:0:0);
+                                                                                                                writeln;
+                                                                                                                writeln('Thank you');
+                                                                                                                readln;
+                                                                                                                halt;
+                                                                                                        end
+                                                                                                        else
+                                                                                                        begin
+                                                                                                                writeln('Thank you :)');
+                                                                                                                exit;
+                                                                                                        end;
+
+                                                                                end;
+                                                                         end;
+                                                                end;
+                                                        #53 :   begin
+                                                                exit;
+                                                                end;
+                                                end;// end of css
+        end;
+
+        procedure Fclass_vip;
+        var
+                css, csss : char;
+                money, price : real;
+        begin
+        clrscr;
+					        writeln('________________________');
+					        writeln;
+					        writeln('       VIP Class');
+					        writeln('________________________');
+					        writeln;
+                                                writeln('1. 30 Minute   : 57.000');
+					        writeln('2. 60 minute   : 114.000');
+					        writeln('3. 90 minute   : 171.000');
+					        writeln('4. 120 minute  : 228.000');
+					        writeln('5. Back.');
+                                                writeln;
+					        writeln('Press the button of your choice');
+                                                css   := readkey;
+                                                case css of
+                                                        #49 :   begin
+                                                                clrscr;
+                                                                        if membership = true and book.aroom = false then
+                                                                        begin
+                                                                                price := vip1-((vip1 * disc1)/100);
+                                                                                writeln('You choosed VIP Class for 30 minutes');
+                                                                                writeln('Membership grant you 5% discount~');
+                                                                                writeln;
+                                                                                writeln('The Amount you have to pay : Rp. ',price:0:0);
+                                                                                writeln;
+                                                                                write('User''s money            : Rp. ');
+                                                                                readln(money);
+                                                                                writeln;
+                                                                                writeln('Press <ENTER> to pay');
+                                                                                csss  := readkey;
+                                                                                if csss = #13 then
+                                                                                                begin
+                                                                                                         if money > price then
+                                                                                                        begin
+                                                                                                                Price := money - price;
+                                                                                                                writeln;
+                                                                                                                writeln(' Your Exchange is : Rp. ',price:0:0);
+                                                                                                                writeln;
+                                                                                                                writeln('Thank you');
+                                                                                                                readln;
+                                                                                                                halt;
+                                                                                                        end
+                                                                                                        else
+                                                                                                        begin
+                                                                                                                writeln('Thank you :)');
+                                                                                                                exit;
+                                                                                                        end;writeln('Thank you');
+                                                                                                        readln;
+                                                                                                        halt;
+                                                                                                end
+                                                                                else
+                                                                                        begin
+                                                                                        exit;
+                                                                                        end;
+                                                                        end
+                                                                        else if book.aroom = false then
+                                                                        begin
+                                                                        clrscr;
+                                                                                price := vip1;
+                                                                                writeln('You choose VIP Class for 30 Minutes');
+                                                                                writeln('If you have membership, you could get 5% Discount~');
+                                                                                writeln;
+                                                                                writeln('The Amount you have to pay : Rp. ',price:0:0);
+                                                                                writeln;
+                                                                                write('User''s money            : Rp. ');
+                                                                                readln(money);
+                                                                                writeln;
+                                                                                writeln('Press <ENTER> to pay');
+                                                                                csss := readkey;
+                                                                                if csss = #13 then
+                                                                                                begin
+                                                                                                         if money > price then
+                                                                                                        begin
+                                                                                                                Price := money - price;
+                                                                                                                writeln;
+                                                                                                                writeln(' Your Exchange is : Rp. ',price:0:0);
+                                                                                                                writeln;
+                                                                                                                writeln('Thank you');
+                                                                                                                readln;
+                                                                                                                halt;
+                                                                                                        end
+                                                                                                        else
+                                                                                                        begin
+                                                                                                                writeln('Thank you :)');
+                                                                                                                exit;
+                                                                                                        end;
+                                                                                                end
+                                                                                else
+                                                                                        begin
+                                                                                        exit;
+                                                                                        end;
+                                                                        end;
+                                                                end;
+                                                        #50 :   begin
+                                                                clrscr;
+                                                                        if membership = true and book.aroom = false then
+                                                                        begin
+                                                                                price := vip2-((vip2 * disc2)/100);
+                                                                                writeln('You choosed VIP Class for 60 minutes');
+                                                                                writeln('Membership grant you 10% discount~');
+                                                                                writeln;
+                                                                                writeln('The Amount you have to pay : Rp. ',price:0:0);
+                                                                                writeln;
+                                                                                write('User''s money            : Rp. ');
+                                                                                readln(money);
+                                                                                writeln;
+                                                                                writeln('Press <ENTER> to pay');
+                                                                                csss  := readkey;
+                                                                                if csss = #13 then
+                                                                                                begin
+                                                                                                         if money > price then
+                                                                                                        begin
+                                                                                                                Price := money - price;
+                                                                                                                writeln;
+                                                                                                                writeln(' Your Exchange is : Rp. ',price:0:0);
+                                                                                                                writeln;
+                                                                                                                writeln('Thank you');
+                                                                                                                readln;
+                                                                                                                halt;
+                                                                                                        end
+                                                                                                        else
+                                                                                                        begin
+                                                                                                                writeln('Thank you :)');
+                                                                                                                exit;
+                                                                                                        end;
+                                                                                                end
+                                                                                else
+                                                                                        begin
+                                                                                        exit;
+                                                                                        end;
+                                                                        end
+                                                                        else if book.aroom = false then
+                                                                        begin
+                                                                        clrscr;
+                                                                                price := vip2;
+                                                                                writeln('You choose VIP Class for 60 Minutes');
+                                                                                writeln('If you have membership, you could get 10% Discount~');
+                                                                                writeln;
+                                                                                writeln('The Amount you have to pay : Rp. ',price:0:0);
+                                                                                writeln;
+                                                                                write('User''s money            : Rp. ');
+                                                                                readln(money);
+                                                                                writeln;
+                                                                                writeln('Press <ENTER> to pay');
+                                                                                csss := readkey;
+                                                                                if csss = #13 then
+                                                                                                begin
+                                                                                                        if money > price then
+                                                                                                        begin
+                                                                                                                Price := money - price;
+                                                                                                                writeln;
+                                                                                                                writeln(' Your Exchange is : Rp. ',price:0:0);
+                                                                                                                writeln;
+                                                                                                                writeln('Thank you');
+                                                                                                                readln;
+                                                                                                                halt;
+                                                                                                        end
+                                                                                                        else
+                                                                                                        begin
+                                                                                                                writeln('Thank you :)');
+                                                                                                                exit;
+                                                                                                        end;
+                                                                                                end
+                                                                                else
+                                                                                        begin
+                                                                                        exit;
+                                                                                        end;
+                                                                        end;
+                                                                end;
+                                                        #51 :   begin
+                                                                clrscr;
+                                                                        if membership = true and book.aroom = false then
+                                                                        begin
+                                                                                price := vip3-((vip3*disc2)/100);
+                                                                                writeln('You choose VIP class for 90 minutes');
+                                                                                writeln('Membership grant you 10% discount~');
+                                                                                writeln;
+                                                                                writeln('The amount you have to pay : Rp. ',price:0:0);
+                                                                                writeln;
+                                                                                write('User''s money            : Rp. ');
+                                                                                readln(money);
+                                                                                writeln;
+                                                                                writeln('Press <ENTER> to pay');
+                                                                                readkey;
+                                                                                csss := #13;
+                                                                                if csss = #13 then
+                                                                                        begin
+                                                                                                if money > price then
+                                                                                                        begin
+                                                                                                                Price := money - price;
+                                                                                                                writeln;
+                                                                                                                writeln(' Your Exchange is : Rp. ',price:0:0);
+                                                                                                                writeln;
+                                                                                                                writeln('Thank you');
+                                                                                                                readln;
+                                                                                                                halt;
+                                                                                                        end
+                                                                                                        else
+                                                                                                        begin
+                                                                                                                writeln('Thank you :)');
+                                                                                                                exit;
+                                                                                                        end;
+                                                                                        end;
+                                                                        end
+
+                                                                        else if book.aroom = false then
+                                                                        begin
+                                                                                price := vip3;
+                                                                                writeln('you choose VIP Class for 90 minutes');
+                                                                                writeln('If you have membership, you could get 10% discount~');
+                                                                                writeln;
+                                                                                writeln('The amount you have to pay : Rp. ',price:0:0);
+                                                                                writeln;
+                                                                                write('User''s money            : Rp. ');
+                                                                                readln(money);
+                                                                                writeln;
+                                                                                writeln('Press <ENTER> to pay');
+                                                                                readkey;
+                                                                                csss := #13;
+                                                                                if csss = #13 then
+                                                                                        begin
+                                                                                                 if money > price then
+                                                                                                        begin
+                                                                                                                Price := money - price;
+                                                                                                                writeln;
+                                                                                                                writeln(' Your Exchange is : Rp. ',price:0:0);
+                                                                                                                writeln;
+                                                                                                                writeln('Thank you');
+                                                                                                                readln;
+                                                                                                                halt;
+                                                                                                        end
+                                                                                                        else
+                                                                                                        begin
+                                                                                                                writeln('Thank you :)');
+                                                                                                                exit;
+                                                                                                        end;
+                                                                                        end
+                                                                                else
+                                                                                        begin
+                                                                                        exit;
+                                                                                        end;
+                                                                        end;
+                                                                end;
+                                                        #52 :   begin
+                                                                clrscr;
+                                                                        if membership = true and book.aroom = false then
+                                                                        begin
+                                                                                price := vip4-((vip4*disc3)/100);
+                                                                                writeln('You choose VIP Class for 120 minutes');
+                                                                                writeln('Membership grant you 15% Discount~');
+                                                                                writeln;
+                                                                                writeln('The amount you have to pay : Rp. ',price:0:0);
+                                                                                writeln;
+                                                                                write('User''s money            : Rp. ');
+                                                                                readln(money);
+                                                                                writeln;
+                                                                                writeln('Press <ENTER> to pay : ',price:0:0);
+                                                                                readkey;
+                                                                                csss := #13;
+                                                                                if csss = #13 then
+                                                                                begin
+                                                                                         if money > price then
+                                                                                                        begin
+                                                                                                                Price := money - price;
+                                                                                                                writeln;
+                                                                                                                writeln(' Your Exchange is : Rp. ',price:0:0);
+                                                                                                                writeln;
+                                                                                                                writeln('Thank you');
+                                                                                                                readln;
+                                                                                                                halt;
+                                                                                                        end
+                                                                                                        else
+                                                                                                        begin
+                                                                                                                writeln('Thank you :)');
+                                                                                                                exit;
+                                                                                                        end;
+                                                                                end
+                                                                                else
+                                                                                        begin
+                                                                                        exit;
+                                                                                        end;
+                                                                         end
+
+                                                                         else if book.aroom = false then
+                                                                         begin
+                                                                                price := vip4;
+                                                                                writeln('You choose VIP Class for 120 minutes');
+                                                                                writeln('If you have membership, you could get 15% Discount~');
+                                                                                writeln;
+                                                                                writeln('The amount you have to pay : Rp. ',price:0:0);
+                                                                                writeln;
+                                                                                writeln('Press <ENTER> to pay');
+                                                                                writeln;
+                                                                                write('User''s money            : Rp. ');
+                                                                                readln(money);
+                                                                                readkey;
+                                                                                csss := #13;
+                                                                                if csss = #13 then
+                                                                                begin
+                                                                                         if money > price then
+                                                                                                        begin
+                                                                                                                Price := money - price;
+                                                                                                                writeln;
+                                                                                                                writeln(' Your Exchange is : Rp. ',price:0:0);
+                                                                                                                writeln;
+                                                                                                                writeln('Thank you :)');
+                                                                                                                readln;
+                                                                                                                halt;
+                                                                                                        end
+                                                                                                        else
+                                                                                                        begin
+                                                                                                                writeln('Thank you :)');
+                                                                                                                exit;
+                                                                                                        end;
+                                                                                end
+                                                                                else
+                                                                                        begin
+                                                                                        exit;
+                                                                                        end;
+                                                                         end;
+                                                                end;
+                                                        #53 :   begin
+                                                                exit;
+                                                                end;
+                                                end;// end of css
+                                        end; // end of cs #50
+
+
+
+        procedure floor;
+        var
+                x : char;
+        begin
+                repeat
+                clrscr;
+                writeln('Which floor do you want to book ?');
+                writeln;
+                writeln('1. Floor 1 : Regular Class.');
+                writeln;
+                writeln('2. Floor 2 : VIP Class.');
+                writeln;
+                writeln('3. INFO.');
+                writeln;
+                writeln('4. Back.');
+                x := readkey;
+                case x of
+                        #49 :   begin
+				book.aroom := true;
+                                fclass_reg;
+                                end;
+
+                        #50 :   begin
+				book.aroom := false;
+                                fclass_vip;
+                                end;
+                        #51 :   begin
+                                clrscr;
+				writeln;
+				writeln('INFO Regular Class');
+				writeln;
+                                writeln('Regular serve  : Maximum of 4 People.');
+                                writeln('                 2 Microphones.');
+                                writeln('                 Free water.');
+                                writeln('                 Air Conditioner.');
+				writeln;
+				writeln('________________________________________');
+				writeln;
+				writeln('INFO VIP Class');
+				writeln;
+                                writeln('VIP serve      : Maximum of 10 People.');
+				writeln('                 4 Microphones');
+				writeln('                 Free Cakes and Water');
+                                writeln('                 Air Conditioner');
+                                writeln;
+				writeln('Press <ENTER> to go back.');
+                                readln;
+                                end;
+                        #52 :   begin
+                                exit;
+                                end;
+
+                end;
+                until (x=#52);
+        end;
+
+        procedure menu_search;
+        var
+                x, pos, m_age      : integer;
+                search             : string;
+                searchm            : real;
+                cs : char;
+        begin
+        clrscr;
+               // indonesia := 62;
+                writeln('Menu Search');
+                writeln;
+                writeln('1. Username.');
+                writeln('2. Mobilephone.');
+                writeln('4. Back.');
+
+                cs := readkey;
+                case cs of
+                        #49 :   begin
+                                clrscr;
+                                        pos := 10;
+                                        writeln('Search by Username.');
+                                        writeln;
+                                        write('Username       : ');
+                                        readln(search);
+                                        x := search_username(ar_data,search);
+                                        if x <> -1 then
+                                                begin
+                                                clrscr;
+                                                        writeln('_______________________________________________________________________________________________________');
+                                                        writeln;
+                                                        writeln('                             | MEMBER OF Code Emerlad Karaoke |                        ');
+                                                        writeln('_______________________________________________________________________________________________________');
+                                                        writeln;
+                                                        writeln;
+                                                        writeln('ID   USERNAME           FULLNAME                 BIRTHDAY         AGE   GENDER  PHONE');
+                                                        writeln('=======================================================================================================');
+                                                        gotoxy(6,pos);
+                                                        write(ar_data[x].username);
+                                                        gotoxy(25,pos);
+                                                        write(ar_data[x].fullname);
+                                                        gotoxy(49,pos);
+                                                        write('|');
+                                                        gotoxy(64,pos);
+                                                        write('|');
+                                                        gotoxy(50,pos);
+                                                        write(ar_data[x].birthdayDD);
+                                                        gotoxy(53,pos);
+                                                        write('/');
+                                                        gotoxy(55,pos);
+                                                        write(ar_data[x].birthdayMM);
+                                                        gotoxy(58,pos);
+                                                        write('/');
+                                                        gotoxy(60,pos);
+                                                        write(ar_data[x].birthdayYYYY);
+                                                        gotoxy(66,pos);
+                                                        write('|');
+                                                        gotoxy(71,pos);
+                                                        write('|');
+                                                        m_age := ((year) - (ar_data[x].birthdayYYYY));
+                                                        gotoxy(68,pos);
+                                                        write(m_age);
+                                                        gotoxy(73,pos);
+                                                        write('|');
+                                                        gotoxy(77,pos);
+                                                        write('|');
+                                                        gotoxy(75,pos);
+                                                        write(ar_data[x].gender);
+                                                        gotoxy(80,pos);
+                                                        write('|');
+                                                        gotoxy(93,pos);
+                                                        write('|');
+                                                        gotoxy(81,pos);
+                                                        write(indonesia,ar_data[x].mobilephone:0:0);
+                                                        readln;
+                                        end;
+
+                                end;
+
+                        #50 :   begin
+                                clrscr;
+                                        pos := 10;
+                                        writeln('Search by Mobilephone');
+                                        writeln;
+                                        write('Mobilephone : +62 ');
+                                        readln(searchm);
+                                        x := search_hp(ar_data,searchm);
+                                        if x <> -1 then
+                                                begin
+                                                clrscr;
+                                                        writeln('_______________________________________________________________________________________________________');
+                                                        writeln;
+                                                        writeln('                             | MEMBER OF Code Emerlad Karaoke |                        ');
+                                                        writeln('_______________________________________________________________________________________________________');
+                                                        writeln;
+                                                        writeln;
+                                                        writeln('ID   USERNAME           FULLNAME                 BIRTHDAY         AGE   GENDER  PHONE');
+                                                        writeln('=======================================================================================================');
+                                                        gotoxy(6,pos);
+                                                        write(ar_data[x].username);
+                                                        gotoxy(25,pos);
+                                                        write(ar_data[x].fullname);
+                                                        gotoxy(49,pos);
+                                                        write('|');
+                                                        gotoxy(64,pos);
+                                                        write('|');
+                                                        gotoxy(50,pos);
+                                                        write(ar_data[x].birthdayDD);
+                                                        gotoxy(53,pos);
+                                                        write('/');
+                                                        gotoxy(55,pos);
+                                                        write(ar_data[x].birthdayMM);
+                                                        gotoxy(58,pos);
+                                                        write('/');
+                                                        gotoxy(60,pos);
+                                                        write(ar_data[x].birthdayYYYY);
+                                                        gotoxy(66,pos);
+                                                        write('|');
+                                                        gotoxy(71,pos);
+                                                        write('|');
+                                                        m_age := ((year) - (ar_data[x].birthdayYYYY));
+                                                        gotoxy(68,pos);
+                                                        write(m_age);
+                                                        gotoxy(73,pos);
+                                                        write('|');
+                                                        gotoxy(77,pos);
+                                                        write('|');
+                                                        gotoxy(75,pos);
+                                                        write(ar_data[x].gender);
+                                                        gotoxy(80,pos);
+                                                        write('|');
+                                                        gotoxy(93,pos);
+                                                        write('|');
+                                                        gotoxy(81,pos);
+                                                        write(indonesia,ar_data[x].mobilephone:0:0);
+                                                        readln;
+                                        end;
+
+
+                                end;
+
+                        #51 :   begin
+                                        exit;
+                                end;
+
+
+                end;
+        end;
+
+
+
+
+
+
+        procedure menu_admin;
+        var
+                x               : char;
+                search          : string;
+                y, pos, m_age   : integer;
+        begin
+        clrscr;
+                repeat
+                clrscr;
+                writeln('__________________________');
+                writeln;
+                writeln('     |  Menu ADMIN |');
+                writeln('__________________________');
+                writeln;
+                writeln('   1. Delete Member.');
+                writeln('   2. View Existing Member.');
+                writeln('   3. Search.');
+                writeln('   4. Edit/Update Username.');
+                writeln('   5. Back to login menu.');
+                writeln;
+
+                x := readkey;
+                case x of
+                        #49 :   delete_member(ar_data,search);
+                        #50 :   begin
+                                        view_Member(ar_data);
+                                end;
+                        #51 :   begin
+                                menu_search;
+                                end;
+                        #52 :   begin
+                                update_dat_username(ar_data);
+
+
+                                end;
+
+                        #53 :   begin
+                                        exit;
+                                end;
+
+                end;
+                until x = #53;
+        end;
+
+        procedure login_admin;
+        var
+             x, xx, uadmin , upass : string;
+        begin
+        clrscr;
+                uadmin := 'admin';
+                upass  := 'artu';
+
+                writeln('________________________________');
+                writeln;
+                writeln(' | Code Emerlad ADMIN LOGIN |');
+                writeln('________________________________');
+                writeln;
+
+                writeln;
+	        writeln('         Username : ');
+	        writeln;
+	        writeln('         Password : ');
+                gotoxy(21,7);
+                readln(x);
+                gotoxy(21,9);
+                readln(xx);
+
+                if (x = uadmin) and (xx = upass) then
+                begin
+                        clrscr;
+                                writeln('________________________________');
+                                writeln;
+                                writeln(' | Code Emerlad ADMIN LOGIN |');
+                                writeln('________________________________');
+                                writeln;
+                                writeln('     Welcome, ADMIN ARTU!');
+                                writeln;
+                                writeln('  Press <ENTER> to ADMIN MENU');
+                                readln;
+                                menu_admin;
+                end
+                else
+                begin
+                        clrscr;
+                                writeln('________________________________');
+                                writeln;
+                                writeln(' | Code Emerlad ADMIN LOGIN |');
+                                writeln('________________________________');
+                                writeln;
+                                writeln('       You are not ADMIN !');
+                                readln;
+                end;
+        end;
+
+        procedure menu_Login(var ar_data : arr_data);
+        var
+                x : char;
+        begin
+        clrscr;
+                repeat
+                clrscr;
+                writeln('_____________________________________');
+                writeln;
+                writeln(' | Menu Login Code Emerlad Karaoke |');
+                writeln('_____________________________________');
+                writeln;
+                writeln('       1. Register as New Member.');
+                writeln('       2. Login as Member.');
+                writeln('       3. Login as ADMIN.');
+                writeln('       4. Back to Home.');
+                writeln;
+                writeln(' Press the button of your choice');
+                x := readkey;
+                case x of
+                        #49 :   regist(ar_data);
+                        #50 :   begin
+                                        login_Member(ar_data,membership);
+                                        if membership = true then
+                                                floor
+                                        else
+                                        exit;
+                                        //menu_disc(ar_data);
+                                end;
+                        #51 :   login_Admin;
+                        #52 :   begin
+                                        exit;
+                                end;
+                end;
+                until x = #52;
+
+        end;
+
+
+
+BEGIN
+clrscr;
+        repeat
+        clrscr;
+        check_dat(ar_data);
+        membership := false;
+        writeln('__________________________________');
+        writeln;
+        writeln('    | Code Emerlad Karaoke |');
+        writeln('__________________________________');
+        writeln;
+        writeln('Current time : ',TimeToStr(time));
+        writeln;
+        writeln('     1. Booking.');
+        writeln('     2. Menu Login.');
+        writeln('     3. exit.');
+        writeln;
+        writeln(' Get Discount by login as member! ');
+        writeln(' Discount start at 5% to 15%!');
+        writeln;
+        writeln(' Press the button of your choice. ');
+
+        choice := readkey;
+        case choice of
+                #49 :   floor;
+
+                #50 :   menu_login(ar_data);
+
+                #51 :   begin
+                                exit;
+                        end;
+        end;
+        until choice = #51;
+
+
+
+
+
+
+
+END.
